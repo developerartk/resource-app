@@ -1,0 +1,159 @@
+databaseChangeLog:
+  - changeSet:
+      id: add_table_location
+      author: Artur
+      preConditions:
+        - not:
+            - tableExists:
+                tableName: location
+      changes:
+        - createTable:
+            tableName: location
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: street_address
+                  type: VARCHAR(255)
+              - column:
+                  name: city
+                  type: VARCHAR(255)
+              - column:
+                  name: postal_code
+                  type: VARCHAR(20)
+              - column:
+                  name: country_code
+                  type: INTEGER
+
+  - changeSet:
+      id: add_table_resource
+      author: Artur
+      preConditions:
+        - not:
+            - tableExists:
+                tableName: resource
+      changes:
+        - createTable:
+            tableName: resource
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: type
+                  type: VARCHAR(255)
+              - column:
+                  name: country_code
+                  type: INTEGER
+              - column:
+                  name: location_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_resource_location
+                    references: location(id)
+
+  - changeSet:
+      id: add_table_characteristic
+      author: Artur
+      preConditions:
+        - not:
+            - tableExists:
+                tableName: characteristic
+      changes:
+        - createTable:
+            tableName: characteristic
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: resource_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_characteristic_resource
+                    references: resource(id)
+              - column:
+                  name: code
+                  type: VARCHAR(10)
+              - column:
+                  name: characteristic_type
+                  type: VARCHAR(255)
+              - column:
+                  name: value
+                  type: VARCHAR(255)
+
+  - changeSet:
+      id: add_data
+      author: Artur
+      changes:
+        - insert:
+            tableName: location
+            columns:
+              - column: { name: id, value: 1 }
+              - column: { name: street_address, value: '123 Main St' }
+              - column: { name: city, value: 'Berlin' }
+              - column: { name: postal_code, value: '10115' }
+              - column: { name: country_code, value: 49 }
+
+        - insert:
+            tableName: location
+            columns:
+              - column: { name: id, value: 2 }
+              - column: { name: street_address, value: '555 Main St' }
+              - column: { name: city, value: 'Tallinn' }
+              - column: { name: postal_code, value: '55845' }
+              - column: { name: country_code, value: 78 }
+
+        - insert:
+            tableName: location
+            columns:
+              - column: { name: id, value: 3 }
+              - column: { name: street_address, value: '777 Main St' }
+              - column: { name: city, value: 'Bali' }
+              - column: { name: postal_code, value: '55846' }
+              - column: { name: country_code, value: 91 }
+
+        - insert:
+            tableName: resource
+            columns:
+              - column: { name: id, value: 1 }
+              - column: { name: type, value: 'METERING_POINT' }
+              - column: { name: country_code, value: 49 }
+              - column: { name: location_id, value: 1}
+
+        - insert:
+            tableName: resource
+            columns:
+              - column: { name: id, value: 2 }
+              - column: { name: type, value: 'CONNECTION_POINT' }
+              - column: { name: country_code, value: 78 }
+              - column: { name: location_id, value: 2 }
+
+        - insert:
+            tableName: resource
+            columns:
+              - column: { name: id, value: 3 }
+              - column: { name: type, value: 'CONNECTION_POINT' }
+              - column: { name: country_code, value: 78 }
+              - column: { name: location_id, value: 3 }
+
+        - insert:
+            tableName: characteristic
+            columns:
+              - column: { name: id, value: 1 }
+              - column: { name: code, value: 'C001' }
+              - column: { name: characteristic_type, value: 'CONSUMPTION_TYPE' }
+              - column: { name: value, value: 'High Voltage' }
+              - column: { name: resource_id, value: 1 }
